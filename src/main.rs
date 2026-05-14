@@ -2,8 +2,9 @@ use std::process;
 
 use clap::Parser;
 use request::get_user_data;
+use serde_json::Error;
 
-use crate::types::osrs_api::OsrsApiErr;
+use crate::types::{osrs_api::OsrsApiErr, player::Player};
 
 mod request;
 mod types;
@@ -38,5 +39,14 @@ fn main() {
         }
     };
 
-    println!("{body}");
+    let player: Player = match serde_json::from_str(&body) {
+        Ok(json) => json,
+        Err(e) => {
+            eprintln!("{e}");
+            process::exit(1)
+        }
+    };
+
+    println!("{player}");
+
 }

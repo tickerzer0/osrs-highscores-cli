@@ -1,5 +1,8 @@
-#[derive(Clone, PartialEq)]
+use serde::Deserialize;
+
+#[derive(Clone, PartialEq, Deserialize, Debug)]
 pub enum Skill {
+    Overall,
     Attack,
     Defence,
     Strength,
@@ -23,6 +26,13 @@ pub enum Skill {
     Runecraft,
     Hunter,
     Construction,
+    Sailing
+}
+
+impl std::fmt::Display for Skill {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 // This function will calculate how much xp is required to reach a given level

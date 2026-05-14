@@ -1,14 +1,17 @@
+use serde::Deserialize;
+
 use super::skill::Skill;
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct SkillData {
     id: u8,
     name: Skill,
-    rank: u32,
+    rank: i32,
     level: u32,
     xp: u32
 } 
 
+#[derive(Deserialize)]
 pub struct Player {
     pub skills: Vec<SkillData>
 }
@@ -17,6 +20,15 @@ pub struct Player {
 impl Player {
     pub fn get_skill(&self, skill_name: Skill) -> Option<&SkillData> {
         self.skills.iter().find(|current_skill| current_skill.name == skill_name)
+    }
+}
+
+impl std::fmt::Display for Player {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for skill in &self.skills {
+            writeln!(f, "{:?}", skill);
+        }
+        Ok(())
     }
 }
 

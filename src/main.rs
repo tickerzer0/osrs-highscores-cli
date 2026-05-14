@@ -1,3 +1,5 @@
+use std::process;
+
 use clap::Parser;
 use request::get_user_data;
 
@@ -28,8 +30,13 @@ fn main() {
     println!("{}", rsn);
 
     let data: Result<String, OsrsApiErr> = get_user_data(rsn);
-    match data {
-        Ok(body) => println!("{body}"),
-        Err(e) => println!("Failed")
+    let body = match data {
+        Ok(body) => body,
+        Err(e) => {
+            eprintln!("{e}");
+            process::exit(1)
+        }
     };
+
+    println!("{body}");
 }

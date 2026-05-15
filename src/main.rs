@@ -34,7 +34,7 @@ fn main() {
     let body = match data {
         Ok(body) => body,
         Err(e) => {
-            eprintln!("{e}");
+            eprintln!("There was an issue fetching the user data: {e}");
             process::exit(1)
         }
     };
@@ -42,7 +42,7 @@ fn main() {
     let player: Player = match serde_json::from_str(&body) {
         Ok(json) => json,
         Err(e) => {
-            eprintln!("{e}");
+            eprintln!("Failed to parse JSON content to Player struct: {e}");
             process::exit(1)
         }
     };

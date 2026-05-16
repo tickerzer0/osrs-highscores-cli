@@ -15,12 +15,6 @@ struct Cli {
     // Required parameter, the player's runescape name (RSN)
     #[arg(short, long)]
     rsn: String,
-
-    #[arg(short)]
-    boss_only: Option<bool>,
-
-    #[arg(short)]
-    skills_only: Option<bool>
 }
 
 fn main() {

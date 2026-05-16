@@ -1,6 +1,10 @@
+use std::thread;
+
 use serde::Deserialize;
 
-use super::skill::Skill;
+use crate::types::skill;
+
+use super::skill::{Skill, SKILL_ORDER, get_level_progress};
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct SkillData {
@@ -8,8 +12,41 @@ pub struct SkillData {
     name: Skill,
     rank: i32,
     level: u32,
-    xp: u32
-} 
+    xp: u32,
+}
+
+fn format_row(cols: Vec<&SkillData>) -> String {
+    let mut formatted = vec![];
+    for col in cols {
+        formatted.push(format!("{col}"))
+    }
+
+    let lines: Vec<Vec<&str>> = formatted.iter().map(|col| col.lines().collect()).collect();
+    let mut joined = vec![];
+    for i in 0..4 {
+        joined.push(format!("{}{}{}", lines[0][i], lines[1][i], lines[2][i]));
+    }
+    joined.join("\n")
+}
+
+
+impl std::fmt::Display for SkillData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = format!("{}", self.name);
+        let level = format!("{}", self.level);
+        let progress = format!("{}%", get_level_progress(self.xp, self.level));
+        write!(
+            f,
+"+------------------+
+| {:<16} |\n\
+| Lv {:<13} |\n\
+| {:<16} |\n\
++------------------+",
+            name, level, progress
+        )
+    }
+
+}
 
 #[derive(Deserialize)]
 pub struct Player {
@@ -18,15 +55,29 @@ pub struct Player {
 
 
 impl Player {
-    pub fn get_skill(&self, skill_name: Skill) -> Option<&SkillData> {
-        self.skills.iter().find(|current_skill| current_skill.name == skill_name)
+    pub fn get_skill(&self, skill_name: &Skill) -> &SkillData {
+        self.skills.iter().find(|current_skill| current_skill.name == *skill_name).unwrap()
     }
 }
 
 impl std::fmt::Display for Player {
+    // Print all skills in the order they are displayed in game. Rows, then columns.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for skill in &self.skills {
-            writeln!(f, "{:?}", skill);
+        
+        let skill_rows: Vec<String> = thread::scope(|s| {
+            let mut handles = vec![];
+
+            for row in SKILL_ORDER.chunks(3) {
+                let handle = s.spawn(|| {
+                    let cols = row.iter().map(|c| self.get_skill(c)).collect();
+                    format_row(cols)
+                });
+                handles.push(handle);
+            }
+            handles.into_iter().map(|h| h.join().unwrap()).collect()
+        });
+        for row in skill_rows {
+            writeln!(f, "{row}")?;
         }
         Ok(())
     }
@@ -63,15 +114,7 @@ mod tests {
     fn test_get_skill_pass() {
         let player = get_dummy_player();
         
-        assert_eq!(player.get_skill(Skill::Attack).unwrap().rank, 1234);
-        assert_eq!(player.get_skill(Skill::Thieving).unwrap().xp, 13000000);
-    }
-
-    #[test]
-        fn test_get_skill_fail() {
-            let player = get_dummy_player();
-
-            let skill = player.get_skill(Skill::Construction);
-            assert!(skill.is_none());
+        assert_eq!(player.get_skill(&Skill::Attack).rank, 1234);
+        assert_eq!(player.get_skill(&Skill::Thieving).xp, 13000000);
     }
 }

@@ -2,7 +2,6 @@ use std::process;
 
 use clap::Parser;
 use request::get_user_data;
-use serde_json::Error;
 
 use crate::types::{osrs_api::OsrsApiErr, player::Player};
 

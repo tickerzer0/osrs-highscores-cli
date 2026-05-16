@@ -2,15 +2,11 @@ use std::thread;
 
 use serde::Deserialize;
 
-use crate::types::skill;
-
 use super::skill::{Skill, SKILL_ORDER, get_level_progress};
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct SkillData {
-    id: u8,
     name: Skill,
-    rank: i32,
     level: u32,
     xp: u32,
 }
@@ -23,7 +19,7 @@ fn format_row(cols: Vec<&SkillData>) -> String {
 
     let lines: Vec<Vec<&str>> = formatted.iter().map(|col| col.lines().collect()).collect();
     let mut joined = vec![];
-    for i in 0..4 {
+    for i in 0..5 {
         joined.push(format!("{}{}{}", lines[0][i], lines[1][i], lines[2][i]));
     }
     joined.join("\n")
@@ -36,8 +32,7 @@ impl std::fmt::Display for SkillData {
         let level = format!("{}", self.level);
         let progress = format!("{}%", get_level_progress(self.xp, self.level));
         write!(
-            f,
-"+------------------+
+            f,"+------------------+
 | {:<16} |\n\
 | Lv {:<13} |\n\
 | {:<16} |\n\
@@ -45,7 +40,6 @@ impl std::fmt::Display for SkillData {
             name, level, progress
         )
     }
-
 }
 
 #[derive(Deserialize)]

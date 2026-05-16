@@ -9,7 +9,7 @@ mod request;
 mod types;
 
 // A CLI tool to fetch statistics of OSRS players and display them
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
     // Required parameter, the player's runescape name (RSN)
@@ -27,7 +27,6 @@ fn main() {
     let cli = Cli::parse();
     
     let rsn = cli.rsn;
-    println!("{}", rsn);
 
     let data: Result<String, OsrsApiErr> = get_user_data(rsn);
     let body = match data {

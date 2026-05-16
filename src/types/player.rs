@@ -85,17 +85,13 @@ mod tests {
 
     fn get_dummy_player() -> Player {
         let attack = SkillData {
-            id: 1,
             name: Skill::Attack,
-            rank: 1234,
             level: 15,
             xp: 12345
         };
 
         let thieving = SkillData {
-            id: 15,
             name: Skill::Thieving,
-            rank: 5678,
             level: 99,
             xp: 13000000
         };
@@ -108,7 +104,7 @@ mod tests {
     fn test_get_skill_pass() {
         let player = get_dummy_player();
         
-        assert_eq!(player.get_skill(&Skill::Attack).rank, 1234);
+        assert_eq!(player.get_skill(&Skill::Attack).name, Skill::Attack);
         assert_eq!(player.get_skill(&Skill::Thieving).xp, 13000000);
     }
 }

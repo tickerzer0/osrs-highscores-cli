@@ -24,9 +24,10 @@ The binary will be at `target/release/osrs-highscores-cli`.
 - [reqwest](https://crates.io/crates/reqwest) — HTTP client (blocking)
 - [serde](https://crates.io/crates/serde) / [serde_json](https://crates.io/crates/serde_json) — JSON deserialization
 
+# Example
 
 ```
-❯ cargo run -- --rsn ticker69lol
+❯ cargo run -- --rsn ticker
 
 +------------------++------------------++------------------+
 | Attack           || Hitpoints        || Mining           |
@@ -68,5 +69,4 @@ The binary will be at `target/release/osrs-highscores-cli`.
 | Lv 83            || Lv 80            || Lv 1             |
 | 29%              || 28%              || 0%               |
 +------------------++------------------++------------------+
-
 ```
